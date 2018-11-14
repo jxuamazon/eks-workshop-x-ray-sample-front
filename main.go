@@ -19,20 +19,37 @@ func init() {
 	xray.Configure(xray.Config{
 		DaemonAddr:     "xray-service.default:2000",
 		LogLevel:       "info",
-		ServiceVersion: "1.2.3",
 	})
 }
 
 func main() {
 
+	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "image/vnd.microsoft.icon")
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Length", strconv.Itoa(len(faviconIco)))
+		w.Header().Set("Vary", "Accept-Encoding")
+		w.Header().Set("Cache-Control", "public, max-age=86400")
+		_, _ = w.Write(faviconIco)
+	})
+
+	tr := &http.Transport{
+		MaxIdleConns:       10,
+		IdleConnTimeout:    30 * time.Second,
+	}
+
+	client := xray.Client(&http.Client{Transport: tr})
+
 	http.Handle("/", xray.Handler(xray.NewFixedSegmentNamer(appName), http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		tr := &http.Transport{
-			MaxIdleConns:       10,
-			IdleConnTimeout:    30 * time.Second,
-		}
+		seg := xray.GetSegment(r.Context())
 
-		client := xray.Client(&http.Client{Transport: tr})
+		if seg == nil {
+			fmt.Println("segment is nil")
+		} else {
+			seg.AddAnnotation("service", "x-ray-sample-back-k8s-request");
+			fmt.Println("segment is NOT nil")
+		}
 
 		resp, err := client.Get("http://x-ray-sample-back-k8s.default.svc.cluster.local")
 
@@ -56,15 +73,6 @@ func main() {
 			io.WriteString(w, string(body))
 		}
 	})))
-
-	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "image/vnd.microsoft.icon")
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Length", strconv.Itoa(len(faviconIco)))
-		w.Header().Set("Vary", "Accept-Encoding")
-		w.Header().Set("Cache-Control", "public, max-age=86400")
-		_, _ = w.Write(faviconIco)
-	})
 
 	http.ListenAndServe(":8080", nil)
 }
