@@ -24,7 +24,7 @@ func main() {
 	http.Handle("/", xray.Handler(xray.NewFixedSegmentNamer(appName), http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 
-		resp, err := http.Get("http://x-ray-sample-back-k8s.default.svc.cluster.local:8080")
+		resp, err := http.Get("http://x-ray-sample-back-k8s.default.svc.cluster.local")
 
 		if err != nil {
 			fmt.Println(err)
