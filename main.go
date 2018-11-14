@@ -13,7 +13,7 @@ import (
 	"github.com/aws/aws-xray-sdk-go/xray"
 )
 
-const appName = "eks-workshop-x-ray-sample"
+const appName = "x-ray-sample-front-k8s"
 
 func init() {
 	xray.Configure(xray.Config{
@@ -42,14 +42,8 @@ func main() {
 
 	http.Handle("/", xray.Handler(xray.NewFixedSegmentNamer(appName), http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		seg := xray.GetSegment(r.Context())
-
-		if seg == nil {
-			fmt.Println("segment is nil")
-		} else {
-			seg.AddAnnotation("service", "x-ray-sample-back-k8s-request");
-			fmt.Println("segment is NOT nil")
-		}
+		_, seg := xray.BeginSegment(r.Context(), "x-ray-sample-back-k8s")
+		seg.AddAnnotation("service", "x-ray-sample-back-k8s-request");
 
 		resp, err := client.Get("http://x-ray-sample-back-k8s.default.svc.cluster.local")
 
@@ -72,6 +66,8 @@ func main() {
 			w.Header().Set("Content-Type", "application/json")
 			io.WriteString(w, string(body))
 		}
+
+		seg.Close(nil)
 	})))
 
 	http.ListenAndServe(":8080", nil)
