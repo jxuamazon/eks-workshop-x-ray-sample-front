@@ -24,12 +24,19 @@ func main() {
 	http.Handle("/", xray.Handler(xray.NewFixedSegmentNamer(appName), http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		resp, err := http.Get("http://x-ray-sample-back-k8s.default:8080")
-		defer resp.Body.Close()
+
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		resp, err = http.Get("http://x-ray-sample-back-k8s:8080")
 
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
+
+		defer resp.Body.Close()
 
 		fmt.Println(resp.Status)
 
