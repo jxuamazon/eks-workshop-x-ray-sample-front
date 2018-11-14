@@ -55,7 +55,7 @@ func main() {
 			w.Header().Set("Content-Type", "application/json")
 			io.WriteString(w, string(body))
 		}
-	})
+	})))
 
 	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "image/vnd.microsoft.icon")
