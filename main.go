@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"strconv"
 	"time"
+	"context"
 
 	_ "github.com/aws/aws-xray-sdk-go/plugins/ec2"
 	_ "github.com/aws/aws-xray-sdk-go/plugins/ecs"
@@ -42,7 +43,7 @@ func main() {
 
 	http.Handle("/", xray.Handler(xray.NewFixedSegmentNamer(appName), http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		_, seg := xray.BeginSegment(r.Context(), "x-ray-sample-back-k8s")
+		_, seg := xray.BeginSegment(context.Background(), "x-ray-sample-back-k8s")
 		seg.AddAnnotation("service", "x-ray-sample-back-k8s-request");
 
 		resp, err := client.Get("http://x-ray-sample-back-k8s.default.svc.cluster.local")
