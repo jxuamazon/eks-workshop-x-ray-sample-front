@@ -72,8 +72,7 @@ func main() {
 
 var html = `<!DOCTYPE HTML><html>
 <head><style>body { background-color: #000000; color: #00FF00; }</style></head>
-<body>
-<br><br>
+<body><br><br>
 <div style="display: block; margin: auto; width: 580px;">
 <pre>
                           oooo$$$$$$$$$$$$oooo
