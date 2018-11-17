@@ -34,7 +34,7 @@ spec:
     spec:
       containers:
         - name: x-ray-sample-front-k8s
-          image: rnzdocker1/eks-workshop-x-ray-sample-front:dc19630cbc93767ca964c57c17f861d0b56b5296
+          image: rnzdocker1/eks-workshop-x-ray-sample-front:363cdaf9e0ba58658c99f52752fa3b0510116d0f
           securityContext:
             privileged: false
             readOnlyRootFilesystem: true
