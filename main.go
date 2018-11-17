@@ -6,7 +6,6 @@ import (
 	"golang.org/x/net/context/ctxhttp"
 	"fmt"
 	"io/ioutil"
-	"strconv"
 	"time"
 
 	_ "github.com/aws/aws-xray-sdk-go/plugins/ec2"
