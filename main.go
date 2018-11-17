@@ -71,7 +71,7 @@ func main() {
 
 
 var html = `<!DOCTYPE HTML><html>
-<head><style>body { background-color: #F5F5F5; color: #708090; margin: auto; text-align: center; }</style></head>
+<head><style>body { background-color: #F5F5F5; color: #708090; margin: auto; margin-left: auto; margin-right: auto; }</style></head>
 <body>
 <pre>
                           oooo$$$$$$$$$$$$oooo
@@ -101,6 +101,7 @@ oo $ $ "$      o$$$$$$$$$    $$$$$$$$$$$$$    $$$$$$$$$o       $$$o$$o$
                                      $$$$$$$$$$"
                                       "$$$""""
 </pre>
+<br><br>
 <div id="api-response">
 <script>
 function get() {
