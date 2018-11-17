@@ -3,11 +3,11 @@ package main
 import (
 	"io"
 	"net/http"
+	"golang.org/x/net/context/ctxhttp"
 	"fmt"
 	"io/ioutil"
 	"strconv"
 	"time"
-	"context"
 
 	_ "github.com/aws/aws-xray-sdk-go/plugins/ec2"
 	_ "github.com/aws/aws-xray-sdk-go/plugins/ecs"
@@ -17,7 +17,7 @@ import (
 const appName = "x-ray-sample-front-k8s"
 
 func init() {
-	xray.Configure(xray.Config{
+		xray.Configure(xray.Config{
 		DaemonAddr:     "xray-service.default:2000",
 		LogLevel:       "info",
 	})
@@ -39,14 +39,9 @@ func main() {
 		IdleConnTimeout:    30 * time.Second,
 	}
 
-	client := xray.Client(&http.Client{Transport: tr})
-
 	http.Handle("/", xray.Handler(xray.NewFixedSegmentNamer(appName), http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		_, seg := xray.BeginSegment(context.Background(), "x-ray-sample-back-k8s")
-		seg.AddAnnotation("service", "x-ray-sample-back-k8s-request");
-
-		resp, err := client.Get("http://x-ray-sample-back-k8s.default.svc.cluster.local")
+		resp, err := ctxhttp.Get(r.Context(), xray.Client(&http.Client{Transport: tr}), "http://x-ray-sample-back-k8s.default.svc.cluster.local")
 
 		if err != nil {
 			fmt.Println(err)
@@ -54,8 +49,6 @@ func main() {
 		}
 
 		defer resp.Body.Close()
-
-		fmt.Println(resp.Status)
 
 		if resp.StatusCode == http.StatusOK {
 			body, err := ioutil.ReadAll(resp.Body)
@@ -66,9 +59,10 @@ func main() {
 
 			w.Header().Set("Content-Type", "application/json")
 			io.WriteString(w, string(body))
+		} else {
+			io.WriteString(w, "Unable to make request to: http://x-ray-sample-back-k8s.default.svc.cluster.local")
 		}
 
-		seg.Close(nil)
 	})))
 
 	http.ListenAndServe(":8080", nil)
