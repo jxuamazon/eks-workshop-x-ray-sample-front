@@ -71,9 +71,10 @@ func main() {
 
 
 var html = `<!DOCTYPE HTML><html>
-<head><style>body { background-color: #000000; color: #00FF00; margin-left: auto; margin-right: auto; }</style></head>
+<head><style>body { background-color: #000000; color: #00FF00; }</style></head>
 <body>
 <br><br>
+<div style="display: block; margin-left: auto; margin-right: auto;">
 <pre>
                           oooo$$$$$$$$$$$$oooo
                       oo$$$$$$$$$$$$$$$$$$$$$$$$o
@@ -104,6 +105,7 @@ oo $ $ "$      o$$$$$$$$$    $$$$$$$$$$$$$    $$$$$$$$$o       $$$o$$o$
 </pre>
 <br><br>
 <div id="api-response">
+</div>
 <script>
 function get() {
 	var xmlHttp = new XMLHttpRequest();
