@@ -71,7 +71,7 @@ func main() {
 
 
 var html = `<!DOCTYPE HTML><html>
-<head><style>body { background-color: #F5F5F5; color: #708090; margin: auto; }</style></head>
+<head><style>body { background-color: #F5F5F5; color: #708090; margin: auto; text-align: center; }</style></head>
 <body>
 <pre>
                           oooo$$$$$$$$$$$$oooo
